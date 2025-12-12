@@ -1,0 +1,725 @@
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1" name="viewport"/>
+  <title>
+   ECOSKIN AI: UV Exposure Analysis
+  </title>
+  <script src="https://cdn.tailwindcss.com">
+  </script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+  <style>
+   body {
+      font-family: 'Inter', sans-serif;
+    }
+    
+    /* Camera modal styles */
+    .camera-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.75);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+    }
+    
+    .camera-container {
+      background-color: white;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      max-width: 32rem;
+      width: 100%;
+    }
+    
+    .camera-video {
+      width: 100%;
+      height: 16rem;
+      background-color: black;
+      margin-bottom: 1rem;
+    }
+  </style>
+ </head>
+ <body class="bg-gray-50 text-gray-900 min-h-screen flex flex-col">
+  <header class="bg-white shadow-md">
+   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
+    <div class="flex items-center space-x-3">
+     <img alt="Logo icon representing AI with blue and green colors" class="h-12 w-12" height="48" src="https://storage.googleapis.com/a1aa/image/a4f94102-5169-431f-0ba5-daae5bfbb05e.jpg" width="48"/>
+     <h1 class="text-2xl font-bold text-green-700">
+      ECOSKIN AI
+     </h1>
+    </div>
+    <nav class="hidden md:flex space-x-8 font-semibold text-gray-700">
+     <a class="hover:text-green-600 transition" href="kk.html">
+      Home
+     </a>
+     <a class="text-green-600 transition" href="uv-exposure.html">
+      UV Exposure
+     </a>
+     <a class="hover:text-green-600 transition" href="#">
+      Genetic Patterns
+     </a>
+     <a class="hover:text-green-600 transition" href="#">
+      Analysis
+     </a>
+     <a class="hover:text-green-600 transition" href="#">
+      Contact
+     </a>
+    </nav>
+    <button aria-label="Open mobile menu" class="md:hidden text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-600" id="mobile-menu-button">
+     <i class="fas fa-bars fa-lg">
+     </i>
+    </button>
+   </div>
+   <nav aria-label="Mobile menu" class="md:hidden bg-white border-t border-gray-200 hidden" id="mobile-menu">
+    <a class="block px-4 py-3 text-gray-700 font-semibold hover:bg-green-50" href="kk.html">
+     Home
+    </a>
+    <a class="block px-4 py-3 text-green-700 font-semibold bg-green-50" href="uv-exposure.html">
+     UV Exposure
+    </a>
+    <a class="block px-4 py-3 text-gray-700 font-semibold hover:bg-green-50" href="genetic-analysis.html">
+     Genetic Patterns
+    </a>
+    <a class="block px-4 py-3 text-gray-700 font-semibold hover:bg-green-50" href="#">
+     Analysis
+    </a>
+    <a class="block px-4 py-3 text-gray-700 font-semibold hover:bg-green-50" href="#">
+     Contact
+    </a>
+   </nav>
+  </header>
+  <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+   <!-- UV Exposure Page Content -->
+   <section class="text-center max-w-4xl mx-auto mb-12">
+    <h2 class="text-4xl font-extrabold text-green-800 mb-4">
+     UV Exposure Analysis
+    </h2>
+    <p class="text-lg text-gray-700">
+     Upload a photo of your skin to analyze UV damage and receive personalized protection recommendations.
+    </p>
+   </section>
+   
+   <!-- 1. Image Upload / Camera Capture -->
+   <section class="bg-white rounded-lg shadow-md p-8 mb-8 max-w-4xl mx-auto">
+    <h3 class="text-2xl font-bold text-green-700 mb-4">Upload Your Skin Photo</h3>
+    <div class="border-2 border-dashed border-green-300 rounded-lg p-8 text-center mb-6 bg-green-50">
+     <div class="flex flex-col items-center">
+      <i class="fas fa-cloud-upload-alt text-5xl text-green-500 mb-4"></i>
+      <p class="text-gray-600 mb-4">Drag and drop your image here or click to browse</p>
+      <input type="file" id="image-upload" accept=".jpg,.jpeg,.png" class="hidden">
+      <label for="image-upload" class="bg-green-600 text-white font-semibold px-6 py-3 rounded-md hover:bg-green-700 transition cursor-pointer">
+       Upload Image
+      </label>
+      <p class="text-sm text-gray-500 mt-2">Supported formats: JPG, PNG (Max size: 10MB)</p>
+     </div>
+    </div>
+    <div class="flex flex-col sm:flex-row justify-center gap-4">
+     <button id="camera-capture" class="bg-blue-600 text-white font-semibold px-6 py-3 rounded-md hover:bg-blue-700 transition flex items-center justify-center">
+      <i class="fas fa-camera mr-2"></i> Capture from Camera
+     </button>
+     <button id="gallery-select" class="bg-gray-200 text-gray-700 font-semibold px-6 py-3 rounded-md hover:bg-gray-300 transition flex items-center justify-center">
+      <i class="fas fa-images mr-2"></i> Choose from Gallery
+     </button>
+     <input type="file" id="gallery-upload" accept=".jpg,.jpeg,.png" class="hidden">
+    </div>
+   </section>
+   
+   <!-- 2. AI Analysis Section -->
+   <section class="bg-white rounded-lg shadow-md p-8 mb-8 max-w-4xl mx-auto">
+    <h3 class="text-2xl font-bold text-green-700 mb-6">AI Analysis Results</h3>
+    
+    <!-- Progress indicator (shown during analysis) -->
+    <div id="analysis-progress" class="mb-6 hidden">
+     <div class="flex items-center justify-center mb-4">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-green-700"></div>
+     </div>
+     <p class="text-center text-gray-700">Analyzing UV damage... Please wait.</p>
+    </div>
+    
+    <!-- Results (shown after analysis) -->
+    <div id="analysis-results" class="hidden">
+     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div>
+       <div class="bg-green-50 rounded-lg p-6 mb-4">
+        <div class="flex items-center justify-between mb-4">
+         <h4 class="text-xl font-semibold text-green-800">UV Damage Assessment</h4>
+         <span id="uv-score-text" class="text-2xl font-bold text-green-700">0%</span>
+        </div>
+        <div class="w-full bg-gray-200 rounded-full h-4">
+         <div id="uv-score-bar" class="h-4 rounded-full bg-gray-400" style="width: 0%"></div>
+        </div>
+        <p id="uv-severity-text" class="mt-2 text-sm text-gray-600">Awaiting analysis</p>
+       </div>
+       
+       <div class="bg-gray-50 rounded-lg p-6">
+        <h4 class="text-lg font-semibold text-gray-800 mb-3">Damage Distribution</h4>
+        <ul class="space-y-2">
+         <li class="flex justify-between">
+          <span class="text-gray-600">Forehead</span>
+          <span class="font-medium text-red-600">High</span>
+         </li>
+         <li class="flex justify-between">
+          <span class="text-gray-600">Cheeks</span>
+          <span class="font-medium text-yellow-600">Moderate</span>
+         </li>
+         <li class="flex justify-between">
+          <span class="text-gray-600">Nose</span>
+          <span class="font-medium text-yellow-600">Moderate</span>
+         </li>
+         <li class="flex justify-between">
+          <span class="text-gray-600">Chin</span>
+          <span class="font-medium text-green-600">Low</span>
+         </li>
+        </ul>
+       </div>
+      </div>
+      
+      <div>
+       <div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
+        <div class="flex border-b border-gray-200">
+         <button class="flex-1 py-3 px-4 font-medium text-center border-b-2 border-green-600 text-green-600">Original</button>
+         <button class="flex-1 py-3 px-4 font-medium text-center text-gray-500 hover:text-green-600">UV Damage Map</button>
+        </div>
+        <div class="p-4">
+         <canvas id="unet-canvas" class="w-full rounded-lg"></canvas>
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+    
+    <!-- Initial state (before upload) -->
+    <div id="analysis-initial" class="text-center py-8">
+     <i class="fas fa-cloud-upload-alt text-5xl text-gray-300 mb-4"></i>
+     <p class="text-gray-500">Upload an image to see AI analysis results</p>
+    </div>
+   </section>
+   
+   <!-- 3. Interactive Visualization -->
+   <section class="bg-white rounded-lg shadow-md p-8 mb-8 max-w-4xl mx-auto hidden" id="visualization-section">
+    <h3 class="text-2xl font-bold text-green-700 mb-6">Interactive Visualization</h3>
+    <div class="relative mb-6">
+     <img src="https://storage.googleapis.com/a1aa/image/5b6e37c1-9e10-42cd-bff0-c3e8a7360a9f.jpg" alt="Original skin image" class="w-full rounded-lg">
+     <div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+      <div class="bg-white bg-opacity-90 p-4 rounded-lg">
+       <p class="text-gray-800 font-medium">Move the slider to compare original and UV damage view</p>
+      </div>
+     </div>
+    </div>
+    <div class="mb-4">
+     <input type="range" min="0" max="100" value="50" class="w-full" id="comparison-slider">
+     <div class="flex justify-between text-sm text-gray-500 mt-1">
+      <span>Original Image</span>
+      <span>UV Damage Overlay</span>
+     </div>
+    </div>
+   </section>
+   
+   <!-- 4. Data Insights -->
+   <section class="bg-white rounded-lg shadow-md p-8 mb-8 max-w-4xl mx-auto">
+    <h3 class="text-2xl font-bold text-green-700 mb-6">Your Skin Health Insights</h3>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+     <div class="bg-blue-50 rounded-lg p-6 text-center">
+      <div class="text-5xl font-bold text-blue-600 mb-2">7.2</div>
+      <h4 class="text-lg font-semibold text-gray-800 mb-1">Current UV Index</h4>
+      <p class="text-sm text-gray-600">High risk in your location</p>
+     </div>
+     <div class="bg-green-50 rounded-lg p-6 text-center">
+      <div class="text-5xl font-bold text-green-600 mb-2">68</div>
+      <h4 class="text-lg font-semibold text-gray-800 mb-1">Skin Health Score</h4>
+      <p class="text-sm text-gray-600">Moderate - Room for improvement</p>
+     </div>
+     <div class="bg-yellow-50 rounded-lg p-6 text-center">
+      <div class="text-5xl font-bold text-yellow-600 mb-2">50+</div>
+      <h4 class="text-lg font-semibold text-gray-800 mb-1">Recommended SPF</h4>
+      <p class="text-sm text-gray-600">Based on your skin type & location</p>
+     </div>
+    </div>
+    <div class="mt-6 p-4 bg-gray-50 rounded-lg">
+     <h4 class="font-semibold text-gray-800 mb-2">Personalized Recommendations:</h4>
+     <ul class="space-y-2 text-gray-700">
+      <li class="flex items-start">
+       <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+       <span>Apply SPF 50+ sunscreen every 2 hours when outdoors</span>
+      </li>
+      <li class="flex items-start">
+       <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+       <span>Wear a wide-brimmed hat and UV-protective clothing</span>
+      </li>
+      <li class="flex items-start">
+       <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+       <span>Consider antioxidant serums to repair existing damage</span>
+      </li>
+      <li class="flex items-start">
+       <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+       <span>Schedule a dermatologist visit for a professional assessment</span>
+      </li>
+     </ul>
+    </div>
+   </section>
+   
+   <!-- 5. History / Report Generation -->
+   <section class="bg-white rounded-lg shadow-md p-8 mb-8 max-w-4xl mx-auto">
+    <div class="flex justify-between items-center mb-6">
+     <h3 class="text-2xl font-bold text-green-700">Your Analysis History</h3>
+     <button class="bg-green-600 text-white font-semibold px-4 py-2 rounded-md hover:bg-green-700 transition flex items-center">
+      <i class="fas fa-download mr-2"></i> Download PDF Report
+     </button>
+    </div>
+    <div class="overflow-x-auto">
+     <table class="min-w-full bg-white">
+      <thead>
+       <tr class="bg-gray-100 text-gray-700">
+        <th class="py-3 px-4 text-left">Date</th>
+        <th class="py-3 px-4 text-left">UV Score</th>
+        <th class="py-3 px-4 text-left">Skin Health</th>
+        <th class="py-3 px-4 text-left">Actions</th>
+       </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-200">
+       <tr>
+        <td class="py-3 px-4">June 15, 2024</td>
+        <td class="py-3 px-4">37%</td>
+        <td class="py-3 px-4">
+         <span class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs">Moderate</span>
+        </td>
+        <td class="py-3 px-4">
+         <button class="text-blue-600 hover:text-blue-800 mr-3">View</button>
+         <button class="text-gray-600 hover:text-gray-800">Compare</button>
+        </td>
+       </tr>
+       <tr>
+        <td class="py-3 px-4">May 22, 2024</td>
+        <td class="py-3 px-4">42%</td>
+        <td class="py-3 px-4">
+         <span class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs">Moderate</span>
+        </td>
+        <td class="py-3 px-4">
+         <button class="text-blue-600 hover:text-blue-800 mr-3">View</button>
+         <button class="text-gray-600 hover:text-gray-800">Compare</button>
+        </td>
+       </tr>
+       <tr>
+        <td class="py-3 px-4">April 10, 2024</td>
+        <td class="py-3 px-4">51%</td>
+        <td class="py-3 px-4">
+         <span class="px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs">High</span>
+        </td>
+        <td class="py-3 px-4">
+         <button class="text-blue-600 hover:text-blue-800 mr-3">View</button>
+         <button class="text-gray-600 hover:text-gray-800">Compare</button>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </section>
+   
+   <!-- 6. Educational Content -->
+   <section class="bg-white rounded-lg shadow-md p-8 mb-8 max-w-4xl mx-auto">
+    <h3 class="text-2xl font-bold text-green-700 mb-6">Understanding UV Exposure</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+     <div>
+      <h4 class="text-xl font-semibold text-gray-800 mb-3">How UV Rays Affect Your Skin</h4>
+      <p class="text-gray-700 mb-4">
+       UV radiation from the sun penetrates the skin and can damage the DNA in your skin cells, leading to premature aging and increasing the risk of skin cancer.
+      </p>
+      <ul class="space-y-2 text-gray-700">
+       <li class="flex items-start">
+        <i class="fas fa-sun text-yellow-500 mt-1 mr-2"></i>
+        <span><strong>UVA rays</strong> penetrate deep into the skin, causing premature aging and wrinkles</span>
+       </li>
+       <li class="flex items-start">
+        <i class="fas fa-sun text-orange-500 mt-1 mr-2"></i>
+        <span><strong>UVB rays</strong> damage the outer layers of skin, causing sunburn and most skin cancers</span>
+       </li>
+       <li class="flex items-start">
+        <i class="fas fa-sun text-red-500 mt-1 mr-2"></i>
+        <span><strong>UVC rays</strong> are blocked by the ozone layer but can come from artificial sources</span>
+       </li>
+      </ul>
+     </div>
+     <div>
+      <h4 class="text-xl font-semibold text-gray-800 mb-3">Daily Protection Tips</h4>
+      <ul class="space-y-3 text-gray-700">
+       <li class="flex items-start">
+        <i class="fas fa-shield-alt text-green-500 mt-1 mr-2"></i>
+        <span>Apply broad-spectrum sunscreen with SPF 30+ daily, even on cloudy days</span>
+       </li>
+       <li class="flex items-start">
+        <i class="fas fa-shield-alt text-green-500 mt-1 mr-2"></i>
+        <span>Reapply sunscreen every 2 hours, or after swimming or sweating</span>
+       </li>
+       <li class="flex items-start">
+        <i class="fas fa-shield-alt text-green-500 mt-1 mr-2"></i>
+        <span>Seek shade during peak sun hours (10am-4pm)</span>
+       </li>
+       <li class="flex items-start">
+        <i class="fas fa-shield-alt text-green-500 mt-1 mr-2"></i>
+        <span>Wear protective clothing, wide-brimmed hats, and UV-blocking sunglasses</span>
+       </li>
+      </ul>
+      <div class="mt-4">
+       <a href="#" class="text-green-600 hover:text-green-800 font-medium flex items-center">
+        <span>Find a dermatologist near you</span>
+        <i class="fas fa-arrow-right ml-2"></i>
+       </a>
+      </div>
+     </div>
+    </div>
+   </section>
+   
+   <!-- 7. Call-to-Action (CTA) -->
+   <section class="bg-green-50 rounded-lg p-8 max-w-4xl mx-auto text-center">
+    <h3 class="text-2xl font-bold text-green-800 mb-4">Continue Your Skin Health Journey</h3>
+    <p class="text-gray-700 mb-6">
+     Take the next step in understanding your skin's unique needs and get personalized recommendations.
+    </p>
+    <div class="flex flex-col sm:flex-row justify-center gap-4">
+     <button class="bg-green-600 text-white font-semibold px-6 py-3 rounded-md hover:bg-green-700 transition">
+      Analyze Again
+     </button>
+     <button class="bg-blue-600 text-white font-semibold px-6 py-3 rounded-md hover:bg-blue-700 transition">
+      Go to Genetic Pattern Mapping
+     </button>
+     <button class="bg-purple-600 text-white font-semibold px-6 py-3 rounded-md hover:bg-purple-700 transition">
+      View Personalized Skincare Plan
+     </button>
+    </div>
+   </section>
+  </main>
+  <footer class="bg-white border-t border-gray-200 mt-16">
+   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col md:flex-row justify-between items-center text-gray-600 text-sm">
+    <p>
+     © 2024 ECOSKIN AI. All rights reserved.
+    </p>
+    <div class="flex space-x-6 mt-4 md:mt-0">
+     <a aria-label="Facebook" class="hover:text-green-700 transition" href="#">
+      <i class="fab fa-facebook fa-lg">
+      </i>
+     </a>
+     <a aria-label="Twitter" class="hover:text-green-700 transition" href="#">
+      <i class="fab fa-twitter fa-lg">
+      </i>
+     </a>
+     <a aria-label="LinkedIn" class="hover:text-green-700 transition" href="#">
+      <i class="fab fa-linkedin fa-lg">
+      </i>
+     </a>
+    </div>
+   </div>
+  </footer>
+  <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web@1.18.0/dist/ort.min.js"></script>
+  <script>
+   const menuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    menuButton.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+
+    // Image upload functionality
+    const imageUpload = document.getElementById('image-upload');
+    const galleryUpload = document.getElementById('gallery-upload');
+    const cameraCapture = document.getElementById('camera-capture');
+    const gallerySelect = document.getElementById('gallery-select');
+    const analysisInitial = document.getElementById('analysis-initial');
+    const analysisProgress = document.getElementById('analysis-progress');
+    const analysisResults = document.getElementById('analysis-results');
+    const visualizationSection = document.getElementById('visualization-section');
+
+    // UNet session (ONNX Runtime Web)
+    let unetSession = null;
+    let unetModelUrl = null; // set if you host a model
+
+    // Load a public skin segmentation UNet if available (placeholder: off by default)
+    async function ensureUNet() {
+      if (unetSession || !unetModelUrl) return unetSession;
+      try {
+        unetSession = await ort.InferenceSession.create(unetModelUrl, { executionProviders: ['wasm'] });
+      } catch (e) {
+        console.warn('UNet failed to load. Falling back to heuristic scoring.', e);
+        unetSession = null;
+      }
+      return unetSession;
+    }
+
+    // Preprocess image to tensor: NCHW float32 1x3x256x256 normalized [0,1]
+    function toTensor(img) {
+      const size = 256;
+      const canvas = document.createElement('canvas');
+      canvas.width = size; canvas.height = size;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, size, size);
+      const { data } = ctx.getImageData(0, 0, size, size);
+      const input = new Float32Array(1 * 3 * size * size);
+      let p = 0, rOff = 0, gOff = size*size, bOff = 2*size*size;
+      for (let i = 0; i < data.length; i += 4) {
+        const r = data[i] / 255, g = data[i+1] / 255, b = data[i+2] / 255;
+        input[rOff++] = r; input[gOff++] = g; input[bOff++] = b; p++;
+      }
+      const tensor = new ort.Tensor('float32', input, [1,3,size,size]);
+      return tensor;
+    }
+
+    // Postprocess UNet output to get binary mask and score
+    function maskFromOutput(output) {
+      // Expect output shape 1x1x256x256 or 1x2x256x256 (logits)
+      const data = output.data;
+      const dims = output.dims;
+      let mask = new Uint8ClampedArray(256*256);
+      if (dims[1] === 1) {
+        // Sigmoid-like output: threshold at 0.5
+        for (let i = 0; i < mask.length; i++) mask[i] = data[i] > 0.5 ? 255 : 0;
+      } else if (dims[1] >= 2) {
+        // Argmax between background (0) and lesion (1)
+        const plane = 256*256;
+        for (let i = 0; i < plane; i++) {
+          const bg = data[i];
+          const fg = data[plane + i];
+          mask[i] = (fg > bg) ? 255 : 0;
+        }
+      }
+      const ones = mask.reduce((s,v)=> s + (v ? 1 : 0), 0);
+      const ratio = ones / mask.length; // 0..1
+      return { mask, ratio };
+    }
+
+    function drawOverlay(originalImg, maskRatio, mask) {
+      const canvas = document.getElementById('unet-canvas');
+      const ctx = canvas.getContext('2d');
+      // Resize canvas to image
+      canvas.width = originalImg.naturalWidth || originalImg.width;
+      canvas.height = originalImg.naturalHeight || originalImg.height;
+      // Draw original
+      ctx.drawImage(originalImg, 0, 0, canvas.width, canvas.height);
+      if (!mask) return;
+      // Create heatmap overlay from mask (scale 256->canvas)
+      const tmp = document.createElement('canvas');
+      tmp.width = 256; tmp.height = 256;
+      const tctx = tmp.getContext('2d');
+      const imgData = tctx.createImageData(256,256);
+      for (let i = 0, p=0; i < mask.length; i++, p+=4) {
+        const v = mask[i];
+        if (v) {
+          imgData.data[p] = 255; // red
+          imgData.data[p+1] = 0;
+          imgData.data[p+2] = 0;
+          imgData.data[p+3] = 90; // alpha
+        } else {
+          imgData.data[p+3] = 0;
+        }
+      }
+      tctx.putImageData(imgData, 0, 0);
+      // Scale overlay to canvas
+      ctx.drawImage(tmp, 0, 0, canvas.width, canvas.height);
+    }
+
+    function updateUIScore(pct) {
+      const uvScoreText = document.getElementById('uv-score-text');
+      const uvScoreBar = document.getElementById('uv-score-bar');
+      const uvSeverityText = document.getElementById('uv-severity-text');
+      uvScoreText.textContent = `${pct}%`;
+      uvScoreBar.style.width = `${pct}%`;
+      uvScoreBar.classList.remove('bg-green-500','bg-yellow-500','bg-red-500','bg-gray-400');
+      let severity = 'Low';
+      if (pct >= 60) { severity = 'High'; uvScoreBar.classList.add('bg-red-500'); }
+      else if (pct >= 30) { severity = 'Moderate'; uvScoreBar.classList.add('bg-yellow-500'); }
+      else { uvScoreBar.classList.add('bg-green-500'); }
+      uvSeverityText.textContent = `${severity} UV damage detected`;
+    }
+
+    // Function to process the image after selection
+    function processImage(file) {
+      // Show progress indicator
+      analysisInitial.classList.add('hidden');
+      analysisProgress.classList.remove('hidden');
+      
+      const reader = new FileReader();
+      reader.onload = async () => {
+        const img = new Image();
+        img.onload = async () => {
+          // Try UNet if configured; otherwise fallback to heuristic
+          await ensureUNet();
+
+          let pct = 0;
+          let mask = null;
+          if (unetSession) {
+            try {
+              const tensor = toTensor(img);
+              const feeds = {};
+              // Try common input names
+              const firstInput = unetSession.inputNames[0];
+              feeds[firstInput] = tensor;
+              const results = await unetSession.run(feeds);
+              const firstOutput = results[unetSession.outputNames[0]];
+              const { mask: m, ratio } = maskFromOutput(firstOutput);
+              mask = m;
+              pct = Math.round(Math.max(0, Math.min(100, ratio * 100)));
+            } catch (e) {
+              console.warn('UNet inference failed, falling back to heuristic.', e);
+              pct = heuristicScore(img);
+            }
+          } else {
+            pct = heuristicScore(img);
+          }
+
+          // Draw overlay
+          drawOverlay(img, pct / 100, mask);
+          // Update UI
+          updateUIScore(pct);
+
+          // Show results
+          analysisProgress.classList.add('hidden');
+          analysisResults.classList.remove('hidden');
+          visualizationSection.classList.remove('hidden');
+        };
+        img.onerror = () => {
+          analysisProgress.classList.add('hidden');
+          alert('Could not load the image for analysis. Try a different file.');
+        };
+        img.src = reader.result;
+      };
+      reader.onerror = () => {
+        analysisProgress.classList.add('hidden');
+        alert('Failed to read the selected image.');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // Simple heuristic score as fallback
+    function heuristicScore(img){
+      const maxDim = 256;
+      const scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+      const w = Math.max(1, Math.floor(img.width * scale));
+      const h = Math.max(1, Math.floor(img.height * scale));
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      const ctx = canvas.getContext('2d', { willReadFrequently: true });
+      ctx.drawImage(img, 0, 0, w, h);
+      const { data } = ctx.getImageData(0, 0, w, h);
+      let redHot = 0; let total = w*h; let sumL=0, sumL2=0;
+      for (let i=0;i<data.length;i+=4){
+        const r=data[i], g=data[i+1], b=data[i+2];
+        const L = 0.299*r + 0.587*g + 0.114*b; sumL+=L; sumL2+=L*L;
+        const redness = r - Math.max(g,b);
+        if (redness>25 && r>80) redHot++;
+      }
+      const redRatio = redHot/total;
+      const meanL = sumL/total; const varL = Math.max(0, sumL2/total - meanL*meanL);
+      const stdevL = Math.sqrt(varL);
+      let score = (redRatio*0.85 + (stdevL/128)*0.25) * 100;
+      return Math.max(0, Math.min(100, Math.round(score)));
+    }
+
+    // Regular file upload handler
+    if (imageUpload) {
+      imageUpload.addEventListener('change', (event) => {
+        if (event.target.files.length > 0) {
+          processImage(event.target.files[0]);
+        }
+      });
+    }
+
+    // Gallery selection handler
+    if (gallerySelect && galleryUpload) {
+      gallerySelect.addEventListener('click', () => {
+        galleryUpload.click();
+      });
+
+      galleryUpload.addEventListener('change', (event) => {
+        if (event.target.files.length > 0) {
+          processImage(event.target.files[0]);
+        }
+      });
+    }
+
+    // Camera capture handler
+    if (cameraCapture) {
+      cameraCapture.addEventListener('click', async () => {
+        try {
+          // Check if the browser supports getUserMedia
+          if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            alert('Your browser does not support camera access. Please try uploading an image instead.');
+            return;
+          }
+
+          // Create a video element to show the camera stream
+          const videoModal = document.createElement('div');
+          videoModal.className = 'fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50';
+          
+          const videoContainer = document.createElement('div');
+          videoContainer.className = 'bg-white p-4 rounded-lg max-w-lg w-full';
+          
+          const videoHeader = document.createElement('div');
+          videoHeader.className = 'flex justify-between items-center mb-4';
+          videoHeader.innerHTML = `
+            <h3 class="text-xl font-bold text-gray-800">Capture Photo</h3>
+            <button id="close-camera" class="text-gray-500 hover:text-gray-700">
+              <i class="fas fa-times"></i>
+            </button>
+          `;
+          
+          const video = document.createElement('video');
+          video.className = 'w-full h-64 bg-black mb-4';
+          video.autoplay = true;
+          
+          const buttonContainer = document.createElement('div');
+          buttonContainer.className = 'flex justify-center';
+          buttonContainer.innerHTML = `
+            <button id="take-photo" class="bg-blue-600 text-white font-semibold px-6 py-2 rounded-md hover:bg-blue-700 transition">
+              <i class="fas fa-camera mr-2"></i> Take Photo
+            </button>
+          `;
+          
+          videoContainer.appendChild(videoHeader);
+          videoContainer.appendChild(video);
+          videoContainer.appendChild(buttonContainer);
+          videoModal.appendChild(videoContainer);
+          document.body.appendChild(videoModal);
+          
+          // Get camera stream
+          const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+          video.srcObject = stream;
+          
+          // Close camera handler
+          document.getElementById('close-camera').addEventListener('click', () => {
+            stream.getTracks().forEach(track => track.stop());
+            document.body.removeChild(videoModal);
+          });
+          
+          // Take photo handler
+          document.getElementById('take-photo').addEventListener('click', () => {
+            // Create a canvas to capture the photo
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            // Convert canvas to blob
+            canvas.toBlob((blob) => {
+              // Stop camera stream
+              stream.getTracks().forEach(track => track.stop());
+              
+              // Remove camera modal
+              document.body.removeChild(videoModal);
+              
+              // Process the captured image
+              processImage(blob);
+            }, 'image/jpeg');
+          });
+        } catch (error) {
+          console.error('Error accessing camera:', error);
+          alert('Could not access the camera. Please check your permissions or try uploading an image instead.');
+        }
+      });
+    }
+  </script>
+ </body>
+</html>

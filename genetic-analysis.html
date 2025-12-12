@@ -1,0 +1,415 @@
+<html lang="en">
+ <head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ECOSKIN AI: Genetic Pattern Analysis</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+  </style>
+ </head>
+ <body class="bg-gray-50 text-gray-900 min-h-screen flex flex-col">
+  <!-- Header -->
+  <header class="bg-white shadow-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
+      <div class="flex items-center space-x-3">
+        <img src="https://storage.googleapis.com/a1aa/image/a4f94102-5169-431f-0ba5-daae5bfbb05e.jpg" width="48" height="48" alt="Logo" class="h-12 w-12" />
+        <h1 class="text-2xl font-bold text-green-700">ECOSKIN AI</h1>
+      </div>
+      <nav class="hidden md:flex space-x-8 font-semibold text-gray-700">
+        <a class="hover:text-green-600 transition" href="kk.html">Home</a>
+        <a class="hover:text-green-600 transition" href="uv-exposure.html">UV Exposure</a>
+        <a class="text-green-600 transition" href="genetic-analysis.html">Genetic Patterns</a>
+        <a class="hover:text-green-600 transition" href="#">Analysis</a>
+        <a class="hover:text-green-600 transition" href="#">Contact</a>
+      </nav>
+      <button id="mobile-menu-button" aria-label="Open mobile menu" class="md:hidden text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-600">
+        <i class="fas fa-bars fa-lg"></i>
+      </button>
+    </div>
+    <nav id="mobile-menu" aria-label="Mobile menu" class="md:hidden bg-white border-t border-gray-200 hidden">
+      <a class="block px-4 py-3 text-gray-700 font-semibold hover:bg-green-50" href="kk.html">Home</a>
+      <a class="block px-4 py-3 text-gray-700 font-semibold hover:bg-green-50" href="uv-exposure.html">UV Exposure</a>
+      <a class="block px-4 py-3 text-green-700 font-semibold bg-green-50" href="genetic-analysis.html">Genetic Patterns</a>
+      <a class="block px-4 py-3 text-gray-700 font-semibold hover:bg-green-50" href="#">Analysis</a>
+      <a class="block px-4 py-3 text-gray-700 font-semibold hover:bg-green-50" href="#">Contact</a>
+    </nav>
+  </header>
+
+  <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <!-- Page Title -->
+    <section class="text-center max-w-3xl mx-auto mb-10">
+      <h2 class="text-4xl font-extrabold text-green-800 mb-3">Genetic Pattern Analysis</h2>
+      <p class="text-lg text-gray-700">Analyze your genetic data to understand mutation patterns and skin cancer risk.</p>
+    </section>
+
+    <!-- Upload Section -->
+    <section class="bg-white rounded-lg shadow-md p-8 mb-8 max-w-4xl mx-auto">
+      <h3 class="text-2xl font-bold text-green-700 mb-4">Upload Genetic Data</h3>
+      <div class="border-2 border-dashed border-green-300 rounded-lg p-8 text-center mb-6 bg-green-50">
+        <div class="flex flex-col items-center">
+          <i class="fas fa-file-upload text-5xl text-green-500 mb-4"></i>
+          <p class="text-gray-600 mb-4">Upload .csv, .txt, or .json files from lab results or simulated data</p>
+          <input type="file" id="genetic-upload" accept=".csv,.txt,.json" class="hidden" />
+          <label for="genetic-upload" class="bg-green-600 text-white font-semibold px-6 py-3 rounded-md hover:bg-green-700 transition cursor-pointer">Select File</label>
+          <p class="text-sm text-gray-500 mt-2">Supported formats: CSV, TXT, JSON (Max size: 5MB)</p>
+        </div>
+      </div>
+
+      <!-- Preview Table -->
+      <div id="preview-container" class="hidden">
+        <h4 class="text-lg font-semibold text-gray-800 mb-3">Data Preview</h4>
+        <div class="overflow-x-auto">
+          <table class="min-w-full bg-white border" id="preview-table">
+            <thead class="bg-gray-100 text-gray-700" id="preview-thead"></thead>
+            <tbody class="divide-y divide-gray-200" id="preview-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Mutation Detection Results -->
+    <section class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto mb-8">
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <h3 class="text-xl font-bold text-green-700 mb-4">Detected Mutations</h3>
+        <ul class="space-y-3" id="mutation-list">
+          <!-- Filled dynamically -->
+        </ul>
+      </div>
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <h3 class="text-xl font-bold text-green-700 mb-2">Genetic Risk Score</h3>
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-3xl font-extrabold text-green-800" id="risk-score-text">0%</span>
+          <span id="risk-badge" class="px-3 py-1 text-sm rounded-full bg-gray-200 text-gray-700">Unknown</span>
+        </div>
+        <div class="w-full bg-gray-200 rounded-full h-4">
+          <div id="risk-bar" class="h-4 rounded-full bg-gray-400" style="width: 0%"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Mutational Signature Visualization -->
+    <section class="bg-white rounded-lg shadow-md p-8 mb-8 max-w-5xl mx-auto">
+      <h3 class="text-2xl font-bold text-green-700 mb-4">Mutational Signatures</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div>
+          <canvas id="mutation-chart" height="180"></canvas>
+        </div>
+        <div>
+          <h4 class="text-lg font-semibold text-gray-800 mb-2">Pathway Map (Informative)</h4>
+          <div class="p-4 bg-green-50 rounded-lg text-sm text-gray-800">
+            <p class="mb-2"><strong>MAPK pathway</strong>: BRAF, NRAS</p>
+            <p class="mb-2"><strong>PI3K pathway</strong>: PTEN, PIK3CA, AKT1</p>
+            <p class="mb-2"><strong>Cell cycle</strong>: CDKN2A, TP53</p>
+            <p class="text-gray-600">Detected mutations are mapped to pathways to illustrate potential oncogenic mechanisms.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Insights & Recommendations -->
+    <section class="bg-white rounded-lg shadow-md p-8 mb-8 max-w-5xl mx-auto">
+      <h3 class="text-2xl font-bold text-green-700 mb-4">Insights & Recommendations</h3>
+      <div id="insights" class="space-y-2 text-gray-700">
+        <p>Upload your genetic file to see personalized insights.</p>
+      </div>
+      <div class="mt-4">
+        <button id="toggle-xai" class="text-green-700 hover:text-green-900 font-medium"><i class="fas fa-lightbulb mr-2"></i>AI Explanation</button>
+        <div id="xai-box" class="mt-2 p-3 bg-gray-50 rounded hidden text-sm text-gray-700">
+          These explanations summarize how detected mutations may influence pathways and risk. They are heuristic and should not be used for diagnosis.
+        </div>
+      </div>
+    </section>
+
+    <!-- Download / Save Option -->
+    <section class="bg-white rounded-lg shadow-md p-6 mb-10 max-w-5xl mx-auto flex items-center justify-between">
+      <button id="download-report" class="bg-green-600 text-white font-semibold px-5 py-3 rounded-md hover:bg-green-700 transition flex items-center"><i class="fas fa-download mr-2"></i>Download Genetic Report (PDF)</button>
+      <div class="flex gap-3">
+        <button id="reset-analysis" class="bg-gray-200 text-gray-700 font-semibold px-4 py-2 rounded-md hover:bg-gray-300 transition">Analyze Again</button>
+        <a href="uv-exposure.html" class="bg-blue-600 text-white font-semibold px-4 py-2 rounded-md hover:bg-blue-700 transition">Go to Risk Prediction</a>
+        <a href="kk.html" class="bg-purple-600 text-white font-semibold px-4 py-2 rounded-md hover:bg-purple-700 transition">Back to Dashboard</a>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t border-gray-200 mt-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col md:flex-row justify-between items-center text-gray-600 text-sm">
+      <p>© 2024 ECOSKIN AI. All rights reserved.</p>
+      <div class="flex space-x-6 mt-4 md:mt-0">
+        <a aria-label="Facebook" class="hover:text-green-700 transition" href="#"><i class="fab fa-facebook fa-lg"></i></a>
+        <a aria-label="Twitter" class="hover:text-green-700 transition" href="#"><i class="fab fa-twitter fa-lg"></i></a>
+        <a aria-label="LinkedIn" class="hover:text-green-700 transition" href="#"><i class="fab fa-linkedin fa-lg"></i></a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const mobileBtn = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+    if (mobileBtn) {
+      mobileBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+    }
+
+    const driverGenes = ['BRAF', 'NRAS', 'TP53', 'CDKN2A', 'PTEN', 'PIK3CA', 'AKT1'];
+
+    function parseCSV(text) {
+      const lines = text.split(/\r?\n/).filter(l => l.trim().length);
+      if (!lines.length) return { headers: [], rows: [] };
+      const headers = lines[0].split(',').map(h => h.trim());
+      const rows = lines.slice(1).map(line => line.split(',').map(v => v.trim()));
+      return { headers, rows };
+    }
+
+    function detectColumns(headers) {
+      const lower = headers.map(h => h.toLowerCase());
+      const geneIdx = lower.findIndex(h => ['gene','gene_name','symbol'].some(k => h.includes(k)));
+      const mutIdx = lower.findIndex(h => ['mutation','variant','change','mut','protein_change','dna_change'].some(k => h.includes(k)));
+      return { geneIdx, mutIdx };
+    }
+
+    function previewTable(headers, rows) {
+      const thead = document.getElementById('preview-thead');
+      const tbody = document.getElementById('preview-tbody');
+      thead.innerHTML = '';
+      tbody.innerHTML = '';
+      const htr = document.createElement('tr');
+      headers.slice(0,6).forEach(h => {
+        const th = document.createElement('th');
+        th.className = 'py-2 px-3 text-left border-b';
+        th.textContent = h;
+        htr.appendChild(th);
+      });
+      thead.appendChild(htr);
+      rows.slice(0,6).forEach(r => {
+        const tr = document.createElement('tr');
+        r.slice(0,6).forEach(v => {
+          const td = document.createElement('td');
+          td.className = 'py-2 px-3';
+          td.textContent = v;
+          tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+      });
+      document.getElementById('preview-container').classList.remove('hidden');
+    }
+
+    function badgeHtml(label, ok) {
+      const color = ok ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800';
+      const icon = ok ? '✅' : '❌';
+      return `<span class="px-2 py-1 rounded-full text-xs ${color}">${icon} ${label}</span>`;
+    }
+
+    function computeMutationTypes(mutations) {
+      const counts = { 'C>T': 0, 'CC>TT': 0, 'C>A': 0, 'C>G': 0, 'T>C': 0, 'T>A': 0, 'Other': 0 };
+      const reSimple = /(A|C|G|T)\s*>\s*(A|C|G|T)/i;
+      const reDouble = /(CC)\s*>\s*(TT)/i;
+      for (const m of mutations) {
+        const s = String(m || '').toUpperCase();
+        if (reDouble.test(s)) { counts['CC>TT']++; continue; }
+        const sm = s.match(reSimple);
+        if (sm) {
+          const key = `${sm[1]}>${sm[2]}`;
+          if (counts[key] != null) counts[key]++; else counts['Other']++;
+        } else {
+          counts['Other']++;
+        }
+      }
+      return counts;
+    }
+
+    function scoreRisk(detected) {
+      // Simple heuristic: weight key drivers higher
+      let score = 0;
+      const weights = { BRAF: 0.35, NRAS: 0.25, TP53: 0.25, CDKN2A: 0.20, PTEN: 0.15, PIK3CA: 0.15, AKT1: 0.10 };
+      for (const g of Object.keys(detected)) if (detected[g]) score += (weights[g] || 0.05);
+      score = Math.max(0, Math.min(1, score));
+      return score;
+    }
+
+    function riskUI(score) {
+      const pct = Math.round(score * 100);
+      const text = document.getElementById('risk-score-text');
+      const bar = document.getElementById('risk-bar');
+      const badge = document.getElementById('risk-badge');
+      text.textContent = pct + '%';
+      bar.style.width = pct + '%';
+      bar.classList.remove('bg-green-500','bg-yellow-500','bg-red-500','bg-gray-400');
+      if (pct >= 60) { bar.classList.add('bg-red-500'); badge.textContent = 'High'; badge.className = 'px-3 py-1 text-sm rounded-full bg-red-100 text-red-800'; }
+      else if (pct >= 30) { bar.classList.add('bg-yellow-500'); badge.textContent = 'Moderate'; badge.className = 'px-3 py-1 text-sm rounded-full bg-yellow-100 text-yellow-800'; }
+      else { bar.classList.add('bg-green-500'); badge.textContent = 'Low'; badge.className = 'px-3 py-1 text-sm rounded-full bg-green-100 text-green-800'; }
+    }
+
+    function insightsUI(score, detected) {
+      const box = document.getElementById('insights');
+      const pct = Math.round(score * 100);
+      const riskLevel = pct >= 60 ? 'High' : pct >= 30 ? 'Moderate' : 'Low';
+      const mutList = Object.entries(detected).filter(([,v]) => v).map(([g]) => g).join(', ') || 'None detected';
+      box.innerHTML = `
+        <p><strong>Summary:</strong> Genetic risk assessed as <strong>${riskLevel}</strong> (${pct}%).</p>
+        <p><strong>Detected driver mutations:</strong> ${mutList}.</p>
+        <p class="text-sm text-gray-600">This tool provides informational insights and is not a diagnostic device.</p>
+        <ul class="list-disc ml-5 mt-2 text-gray-700">
+          <li>Maintain sun protection habits daily.</li>
+          <li>${riskLevel === 'High' ? 'Schedule regular dermatologist visits (every 3–6 months).' : 'Annual skin checks are recommended.'}</li>
+          <li>Discuss genetic testing and family history with a healthcare provider.</li>
+        </ul>`;
+    }
+
+    let chart;
+    function renderChart(counts) {
+      const ctx = document.getElementById('mutation-chart');
+      const labels = Object.keys(counts);
+      const data = Object.values(counts);
+      if (chart) chart.destroy();
+      chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [{ label: 'Mutation types', data, backgroundColor: ['#22c55e','#84cc16','#f59e0b','#ef4444','#06b6d4','#8b5cf6','#9ca3af'] }]
+        },
+        options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision:0 } } } }
+      });
+    }
+
+    function detectMutations(rows, geneIdx, mutIdx) {
+      const detected = Object.fromEntries(driverGenes.map(g => [g, false]));
+      const mutations = [];
+      for (const r of rows) {
+        const gene = (r[geneIdx] || '').toString().toUpperCase();
+        const mut = (r[mutIdx] || '').toString();
+        if (driverGenes.includes(gene)) detected[gene] = true;
+        if (mut) mutations.push(mut);
+      }
+      return { detected, mutations };
+    }
+
+    function parseTXT(text) {
+      // Expect lines like: GENE, MUTATION or just free text with gene names
+      const rows = text.split(/\r?\n/).map(l => l.split(/[\t,]/).map(s => s.trim())).filter(r => r.some(c => c));
+      let headers = ['Gene','Mutation'];
+      // Heuristic: if first row has non-letters, treat as header
+      if (rows.length && rows[0].every(c => /[a-z]/i.test(c))) {
+        headers = rows.shift();
+      }
+      return { headers, rows };
+    }
+
+    function parseJSON(text) {
+      try {
+        const data = JSON.parse(text);
+        // Accept array of objects [{gene: 'BRAF', mutation: 'V600E'}]
+        if (Array.isArray(data) && data.length && typeof data[0] === 'object') {
+          const headers = Object.keys(data[0]);
+          const rows = data.map(obj => headers.map(h => obj[h] ?? ''));
+          return { headers, rows };
+        }
+      } catch { }
+      return { headers: [], rows: [] };
+    }
+
+    const fileInput = document.getElementById('genetic-upload');
+    fileInput.addEventListener('change', async (e) => {
+      if (!e.target.files.length) return;
+      const file = e.target.files[0];
+      if (file.size > 5 * 1024 * 1024) { alert('File too large. Max 5MB.'); return; }
+      const ext = (file.name.split('.').pop() || '').toLowerCase();
+      const text = await file.text();
+      let parsed = { headers: [], rows: [] };
+      if (ext === 'csv') parsed = parseCSV(text);
+      else if (ext === 'json') parsed = parseJSON(text);
+      else parsed = parseTXT(text);
+
+      if (!parsed.rows.length) { alert('Could not parse file. Ensure it has gene and mutation columns.'); return; }
+
+      previewTable(parsed.headers, parsed.rows);
+      const { geneIdx, mutIdx } = detectColumns(parsed.headers);
+      const gi = geneIdx >= 0 ? geneIdx : 0;
+      const mi = mutIdx >= 0 ? mutIdx : 1;
+      const { detected, mutations } = detectMutations(parsed.rows, gi, mi);
+
+      // Mutation badges list
+      const ul = document.getElementById('mutation-list');
+      ul.innerHTML = '';
+      ['BRAF','NRAS','TP53','CDKN2A'].forEach(g => {
+        const li = document.createElement('li');
+        li.className = 'flex justify-between items-center bg-gray-50 p-3 rounded';
+        li.innerHTML = `<span class="font-medium text-gray-800">${g}</span>${badgeHtml('Detected', !!detected[g])}`;
+        ul.appendChild(li);
+      });
+
+      // Risk scoring and UI
+      const risk = scoreRisk(detected);
+      riskUI(risk);
+      insightsUI(risk, detected);
+
+      // Chart
+      renderChart(computeMutationTypes(mutations));
+
+      // Save for comparison mode
+      try { localStorage.setItem('ecoskin_last_genetic', JSON.stringify({ when: Date.now(), detected, risk, counts: computeMutationTypes(mutations) })); } catch {}
+    });
+
+    // XAI toggle
+    document.getElementById('toggle-xai').addEventListener('click', () => {
+      document.getElementById('xai-box').classList.toggle('hidden');
+    });
+
+    // Analyze Again
+    document.getElementById('reset-analysis').addEventListener('click', () => {
+      document.getElementById('preview-thead').innerHTML = '';
+      document.getElementById('preview-tbody').innerHTML = '';
+      document.getElementById('preview-container').classList.add('hidden');
+      document.getElementById('mutation-list').innerHTML = '';
+      riskUI(0);
+      insightsUI(0, {});
+      if (chart) chart.destroy();
+      fileInput.value = '';
+    });
+
+    // Download PDF
+    document.getElementById('download-report').addEventListener('click', () => {
+      const { jsPDF } = window.jspdf || {};
+      if (!jsPDF) { alert('PDF library failed to load.'); return; }
+      const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+      doc.setFont('helvetica','bold'); doc.setFontSize(18);
+      doc.text('ECOSKIN AI - Genetic Analysis Report', 40, 50);
+      doc.setFont('helvetica','normal'); doc.setFontSize(12);
+      const score = document.getElementById('risk-score-text').textContent || '0%';
+      const badge = document.getElementById('risk-badge').textContent || 'Unknown';
+      doc.text(`Genetic Risk Score: ${score} (${badge})`, 40, 80);
+      // Detected mutations
+      const lis = Array.from(document.querySelectorAll('#mutation-list li'));
+      const items = lis.map(li => li.innerText.replace(/\s+/g,' ').trim());
+      doc.text('Detected Mutations:', 40, 110);
+      let y = 130;
+      items.forEach(it => { doc.text('• ' + it, 50, y); y += 16; });
+      doc.text('Recommendations:', 40, y + 10); y += 28;
+      const recs = [
+        'Maintain strict UV protection habits',
+        'Discuss findings with a healthcare professional',
+        'Schedule regular dermatology check-ups based on risk level'
+      ];
+      recs.forEach(r => { doc.text('• ' + r, 50, y); y += 16; });
+      doc.save('genetic-analysis-report.pdf');
+    });
+
+    // Comparison mode (optional)
+    (function loadComparison() {
+      try {
+        const last = JSON.parse(localStorage.getItem('ecoskin_last_genetic') || 'null');
+        if (!last) return;
+        // Provide a simple note; full compare UI can be added later
+        const note = document.createElement('div');
+        note.className = 'max-w-5xl mx-auto mb-6 p-4 bg-blue-50 text-blue-800 rounded';
+        note.innerHTML = '<strong>Comparison mode:</strong> A previous genetic analysis was found and will be used for trend awareness.';
+        document.querySelector('main').insertBefore(note, document.querySelector('main').children[1]);
+      } catch {}
+    })();
+  </script>
+ </body>
+</html>
